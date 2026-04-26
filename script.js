@@ -1,4 +1,4 @@
-const streamUrl = "https://ec1.everestcast.host:1595/stream";
+const streamUrl = "https://yayin.radyopop.site:1595/stream";
 const metadataUrl = "https://ec1.everestcast.host:1595/status-json.xsl";
 const defaultArtwork = "assets/radyo-pop-icon.png";
 
