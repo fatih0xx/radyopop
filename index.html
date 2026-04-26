@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f1e7">
+  <title>Radyo Pop | Reklamsız Hit Müzik</title>
+  <link rel="icon" type="image/png" href="assets/radyo-pop-icon.png">
+  <link rel="apple-touch-icon" href="assets/radyo-pop-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-glow page-glow-left"></div>
+  <div class="page-glow page-glow-right"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#anasayfa" aria-label="Radyo Pop ana sayfa">
+      <img src="assets/radyo-pop-icon.png" alt="Radyo Pop logosu">
+      <div>
+        <strong>Radyo Pop</strong>
+        <small>Reklamsız Hit Müzik</small>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <a href="#player">Dinle</a>
+      <a href="#akis">Yayın Akışı</a>
+      <a href="#baglanti">Bağlantı</a>
+    </nav>
+
+    <a class="nav-button" href="#player">Şimdi dinle</a>
+  </header>
+
+  <main id="anasayfa" class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Canlı Radyo Deneyimi</p>
+        <h1>Reklamsız hit müzik akışını günün her anında yanında taşı.</h1>
+        <p class="hero-text">
+          Radyo Pop, sevilen pop hitlerini kesintisiz yayınla buluşturur.
+          Tek dokunuşla yayını başlat, o anda çalan şarkıyı gör ve ister telefonda
+          ister bilgisayarda aynı akıcı deneyimi yaşa.
+        </p>
+
+        <div class="hero-actions">
+          <button id="heroPlayButton" class="button primary" type="button">Yayını Başlat</button>
+          <a class="button secondary" href="https://ec1.everestcast.host:1595/stream" target="_blank" rel="noreferrer">Harici Oynatıcıda Aç</a>
+        </div>
+
+        <div class="hero-stats">
+          <article>
+            <strong>7/24</strong>
+            <span>Kesintisiz canlı yayın</span>
+          </article>
+          <article>
+            <strong>Canlı</strong>
+            <span>Anlık şarkı bilgisi</span>
+          </article>
+          <article>
+            <strong>Uyumlu</strong>
+            <span>Mobil ve masaüstü tasarım</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="player-wrap" id="player">
+        <section class="player-card">
+          <div class="player-header">
+            <div class="station-art">
+              <img src="assets/radyo-pop-icon.png" alt="Radyo Pop kapak görseli">
+              <div class="equalizer is-idle" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="player-title">
+              <p class="player-label">Şu anda dinlediğiniz kanal</p>
+              <h2 id="statusTitle">Radyo Pop Canlı Yayın</h2>
+              <p id="statusText">Yayını başlatmak için oynat düğmesine basın.</p>
+            </div>
+          </div>
+
+          <div class="now-playing-card">
+            <img id="trackArtwork" class="track-artwork" src="assets/radyo-pop-icon.png" alt="Çalan şarkının kapak görseli">
+
+            <div class="track-copy">
+              <span class="track-label">Şimdi Çalan</span>
+              <strong id="trackTitle">Yayın bilgisi yükleniyor</strong>
+              <span id="trackArtist">Radyo Pop</span>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <button id="playButton" class="play-button" type="button" aria-label="Yayını oynat">▶</button>
+
+            <div class="volume-box">
+              <label for="volumeControl">Ses</label>
+              <input id="volumeControl" type="range" min="0" max="1" step="0.05" value="0.85">
+            </div>
+          </div>
+
+          <div class="link-row">
+            <a class="link-chip" href="https://ec1.everestcast.host:1595/stream" target="_blank" rel="noreferrer">Yayın linkini aç</a>
+            <button id="copyLinkButton" class="link-chip" type="button">Linki kopyala</button>
+          </div>
+
+          <div class="stream-box" id="baglanti">
+            <span>Stream</span>
+            <code id="streamUrl">https://ec1.everestcast.host:1595/stream</code>
+          </div>
+
+          <audio id="radioStream" preload="auto" src="https://ec1.everestcast.host:1595/stream"></audio>
+        </section>
+      </div>
+    </section>
+
+    <section class="feature-strip" id="akis">
+      <article class="feature-card feature-card-primary schedule-card">
+        <div class="schedule-head">
+          <div>
+            <p class="eyebrow">Yayın Akışı</p>
+            <h3>Haftalık program saatleri</h3>
+          </div>
+          <span class="schedule-badge" id="scheduleBadge">Canlı Akış</span>
+        </div>
+
+        <div class="schedule-grid">
+          <section class="schedule-block">
+            <h4>Pazartesi - Cuma</h4>
+            <ul>
+              <li class="schedule-item" data-group="weekday" data-start="06:00" data-end="11:00"><span>06.00 - 11.00</span><strong>Pop Morning</strong></li>
+              <li class="schedule-item" data-group="weekday" data-start="11:00" data-end="15:00"><span>11.00 - 15.00</span><strong>Pop Coffee</strong></li>
+              <li class="schedule-item" data-group="weekday" data-start="15:00" data-end="19:00"><span>15.00 - 19.00</span><strong>Non Stop Hits</strong></li>
+              <li class="schedule-item" data-group="weekday" data-start="19:00" data-end="21:00"><span>19.00 - 21.00</span><strong>Radyo Pop Non Stop</strong></li>
+              <li class="schedule-item" data-group="weekday" data-start="21:00" data-end="06:00"><span>21.00 - 06.00</span><strong>Radyo Pop Gece</strong></li>
+            </ul>
+          </section>
+
+          <section class="schedule-block">
+            <h4>Cumartesi - Pazar</h4>
+            <ul>
+              <li class="schedule-item" data-group="weekend" data-start="06:00" data-end="11:00"><span>06.00 - 11.00</span><strong>Pop Morning</strong></li>
+              <li class="schedule-item" data-group="weekend" data-start="11:00" data-end="15:00"><span>11.00 - 15.00</span><strong>Pop Coffee</strong></li>
+              <li class="schedule-item" data-group="weekend" data-start="15:00" data-end="23:00"><span>15.00 - 23.00</span><strong>Radyo Pop Haftasonu</strong></li>
+              <li class="schedule-item" data-group="weekend" data-start="23:00" data-end="06:00"><span>23.00 - 06.00</span><strong>Radyo Pop Gece</strong></li>
+            </ul>
+          </section>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
