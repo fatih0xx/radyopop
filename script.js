@@ -1,5 +1,5 @@
 // --- AYARLAR VE DEĞİŞKENLER ---
-let streamUrl = "https://yayin.radyopop.site:1595/stream"; // Varsayılan link
+let streamUrl = "https://holy-morning-45cf.fatih0xx.workers.dev/"; // Varsayılan link
 const metadataUrl = "https://ec1.everestcast.host:1595/status-json.xsl";
 const defaultArtwork = "assets/radyo-pop-icon.png";
 
