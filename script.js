@@ -1,6 +1,6 @@
 // --- AYARLAR VE DEĞİŞKENLER ---
-let streamUrl = "https://yayin.radyopop.site:1595/stream"; // Varsayılan link
-const metadataUrl = "https://ec1.everestcast.host:1595/status-json.xsl";
+let streamUrl = "https://yayin.radyopop.site/radyo"; // Yeni güvenli yayın linkin
+const metadataUrl = "https://yayin.radyopop.site/status-json.xsl"; // Yeni metadata adresin
 const defaultArtwork = "assets/radyo-pop-icon.png";
 
 const audio = document.getElementById("radioStream");
@@ -25,14 +25,19 @@ async function loadConfig() {
     try {
         const response = await fetch('radyo-ayar.json', { cache: "no-store" });
         const data = await response.json();
-        if (data.streamUrl) {
+        // Eğer radyo-ayar.json içinde link varsa onu kullan, yoksa yukarıdaki varsayılanı kullan
+        if (data.radyo_url) {
+            streamUrl = data.radyo_url;
+        } else if (data.streamUrl) {
             streamUrl = data.streamUrl;
-            audio.src = streamUrl;
-            if (streamUrlField) streamUrlField.textContent = streamUrl;
-            console.log("Yeni yayın linki başarıyla yüklendi: " + streamUrl);
         }
+        
+        audio.src = streamUrl;
+        if (streamUrlField) streamUrlField.textContent = streamUrl;
+        console.log("Yayın linki aktif: " + streamUrl);
     } catch (error) {
-        console.error("Ayar dosyası yüklenemedi, varsayılan link kullanılıyor:", error);
+        console.error("Ayar dosyası okunamadı, varsayılan kullanılıyor.");
+        audio.src = streamUrl;
     }
 }
 
@@ -40,7 +45,7 @@ async function loadConfig() {
 const idleState = { title: "Radyo Pop Canlı Yayın", text: "Yayını başlatmak için oynat düğmesine basın." };
 const playingState = { title: "Radyo Pop Canlı Yayın", text: "Yayın açık. Keyifli dinlemeler." };
 const loadingState = { title: "Bağlanıyor...", text: "Yayın hazırlanıyor. Birkaç saniye içinde ses gelmeli." };
-const errorState = { title: "Bağlantı Hatası", text: "Yayın şu anda açılamadı. Harici oynatıcı bağlantısını deneyebilirsiniz." };
+const errorState = { title: "Bağlantı Hatası", text: "Yayın şu anda açılamadı. Lütfen internetinizi kontrol edin." };
 
 // --- FONKSİYONLAR (Görsel ve Durum) ---
 function setVisualState(isPlaying) {
@@ -102,7 +107,7 @@ function normalizeText(value) {
 
 function parseNowPlaying(rawTitle) {
     const cleanTitle = normalizeText(rawTitle);
-    if (!cleanTitle) return { title: "Yayın bilgisi yükleniyor", artist: "Radyo Pop" };
+    if (!cleanTitle) return { title: "Radyo Pop", artist: "Kesintisiz Müzik" };
     const parts = cleanTitle.split(" - ");
     if (parts.length >= 2) {
         return { artist: parts.shift().trim(), title: parts.join(" - ").trim() };
@@ -127,7 +132,7 @@ async function loadArtworkJsonp(searchTerm) {
 
 async function updateArtwork(info) {
     const searchKey = `${info.artist} ${info.title}`.trim();
-    if (!searchKey) { trackArtwork.src = defaultArtwork; return; }
+    if (!searchKey || searchKey === "Radyo Pop Kesintisiz Müzik") { trackArtwork.src = defaultArtwork; return; }
     if (artworkCache.has(searchKey)) { trackArtwork.src = artworkCache.get(searchKey) || defaultArtwork; return; }
     const artwork = await loadArtworkJsonp(searchKey);
     artworkCache.set(searchKey, artwork || defaultArtwork);
@@ -138,16 +143,20 @@ async function refreshNowPlaying() {
     try {
         const response = await fetch(metadataUrl, { cache: "no-store" });
         const data = await response.json();
-        const source = Array.isArray(data?.icestats?.source) ? data.icestats.source[0] : data?.icestats?.source;
-        const rawTitle = source?.title || source?.metadata?.x_icy_title || source?.yp_currently_playing || source?.server_name;
+        
+        // Icecast/Akkurtcast yapılarına göre veriyi bul
+        const source = Array.isArray(data?.icestats?.source) 
+            ? data.icestats.source.find(s => s.listenurl.includes('/radyo')) || data.icestats.source[0]
+            : data?.icestats?.source;
+
+        const rawTitle = source?.title || source?.metadata?.x_icy_title || source?.yp_currently_playing;
+        
         const info = parseNowPlaying(rawTitle);
         trackTitle.textContent = info.title;
         trackArtist.textContent = info.artist;
         await updateArtwork(info);
     } catch (error) {
-        trackTitle.textContent = "Yayın bilgisi alınamadı";
-        trackArtist.textContent = "Radyo Pop";
-        trackArtwork.src = defaultArtwork;
+        console.log("Şarkı bilgisi henüz güncellenmedi.");
     }
 }
 
@@ -157,6 +166,8 @@ async function togglePlayback() {
         if (audio.paused) {
             setVisualState(false);
             updateStatus(loadingState);
+            // Yayının güncel kalması için her oynatmada src'yi tazele
+            audio.load();
             await audio.play();
         } else {
             audio.pause();
