@@ -1,6 +1,6 @@
 // --- AYARLAR VE DEĞİŞKENLER ---
 let streamUrl = "https://yayin.radyopop.site/radyo";
-const metadataUrl = "https://yayin.radyopop.site/status-json.xsl";
+const metadataUrl = "https://yayin.radyopop.site/api/now-playing";
 const defaultArtwork = "assets/radyo-pop-icon.png";
 
 const audio = document.getElementById("radioStream");
@@ -110,6 +110,33 @@ function parseNowPlaying(rawTitle) {
     return { title: cleanTitle, artist: "Radyo Pop" };
 }
 
+function cleanTrackTitle(value) {
+    const cleanValue = normalizeText(value);
+    if (!cleanValue) return "";
+    const withoutQuery = cleanValue.split("?")[0];
+    const fileName = withoutQuery.split(/[\\/]/).pop() || withoutQuery;
+    return fileName.replace(/\.[a-z0-9]{2,5}$/i, "").trim();
+}
+
+function readAkkurtcastNowPlaying(data) {
+    const now = data?.now || {};
+    const apiTitle = cleanTrackTitle(now.title || "");
+    const apiArtist = normalizeText(now.artist || "");
+    if (apiTitle && apiArtist) return { title: apiTitle, artist: apiArtist };
+
+    const fallbackTitle = cleanTrackTitle(now.filename || now.title || "");
+    if (fallbackTitle) {
+        const parsed = parseNowPlaying(fallbackTitle);
+        return {
+            title: parsed.title,
+            artist: apiArtist || parsed.artist || "Radyo Pop"
+        };
+    }
+
+    const rawTitle = normalizeText(now.icy_title || now.metadata || data?.title || "");
+    return parseNowPlaying(rawTitle);
+}
+
 async function loadArtworkJsonp(searchTerm) {
     return new Promise((resolve) => {
         const callbackName = `itunesCallback_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
@@ -137,10 +164,11 @@ async function updateArtwork(info) {
 async function refreshNowPlaying() {
     try {
         const response = await fetch(metadataUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Metadata HTTP ${response.status}`);
         const data = await response.json();
-        const source = Array.isArray(data?.icestats?.source) ? data.icestats.source[0] : data?.icestats?.source;
-        const rawTitle = source?.title || source?.metadata?.x_icy_title || source?.yp_currently_playing || source?.server_name;
-        const info = parseNowPlaying(rawTitle);
+        const info = data?.now ? readAkkurtcastNowPlaying(data) : parseNowPlaying(
+            (Array.isArray(data?.icestats?.source) ? data.icestats.source[0] : data?.icestats?.source)?.title
+        );
         trackTitle.textContent = info.title;
         trackArtist.textContent = info.artist;
         await updateArtwork(info);
