@@ -1,6 +1,6 @@
 // --- AYARLAR VE DEĞİŞKENLER ---
 let streamUrl = "https://yayin.radyopop.site/radyo";
-const metadataUrl = "https://yayin.radyopop.site/api/now-playing";
+const metadataUrl = "https://akkurtcastpanel.radyopop.site:5050/api/now-playing";
 const defaultArtwork = "assets/radyo-pop-icon.png";
 
 const audio = document.getElementById("radioStream");
