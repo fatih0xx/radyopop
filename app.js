@@ -54,6 +54,16 @@ const volumeRange = document.querySelector("#volumeRange");
 const stationButtons = Array.from(document.querySelectorAll(".station-button"));
 const dialogButtons = Array.from(document.querySelectorAll("[data-dialog]"));
 const closeDialogButtons = Array.from(document.querySelectorAll("[data-close-dialog]"));
+const chatWidget = document.querySelector("#siteChat");
+const chatToggle = document.querySelector("#chatToggle");
+const chatClose = document.querySelector("#chatClose");
+const chatMessages = document.querySelector("#chatMessages");
+const chatForm = document.querySelector("#chatForm");
+const chatInput = document.querySelector("#chatInput");
+
+const chatApiBase = "https://akkurtcastpanel.radyopop.site:5050";
+const chatVisitorKey = "radyoPopChatVisitorId";
+const chatConversationKey = "radyoPopChatConversationId";
 
 const audioPool = new Map();
 
@@ -63,6 +73,15 @@ let metadataTimer = null;
 let intendedToPlay = false;
 let fastSwitchingPrimed = false;
 let switchToken = 0;
+let chatConversationId = localStorage.getItem(chatConversationKey) || "";
+let chatVisitorId = localStorage.getItem(chatVisitorKey) || "";
+let chatPollTimer = null;
+let chatStarting = false;
+
+if (!chatVisitorId) {
+  chatVisitorId = globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem(chatVisitorKey, chatVisitorId);
+}
 
 function setLiveState(text) {
   liveState.textContent = text;
@@ -362,6 +381,146 @@ function scheduleMetadata() {
   loadNowPlaying(activeChannel.id);
   metadataTimer = setInterval(() => loadNowPlaying(activeChannel.id), 25000);
 }
+
+function chatRequest(path, options = {}) {
+  return fetch(`${chatApiBase}${path}`, {
+    cache: "no-store",
+    ...options
+  }).then(async (response) => {
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || "Sohbet bağlantısı kurulamadı.");
+    }
+
+    return data;
+  });
+}
+
+function chatPost(path, payload) {
+  return chatRequest(path, {
+    method: "POST",
+    body: new URLSearchParams(payload)
+  });
+}
+
+function renderChatMessages(conversation) {
+  if (!chatMessages || !conversation) {
+    return;
+  }
+
+  chatMessages.textContent = "";
+
+  conversation.messages.forEach((message) => {
+    const row = document.createElement("div");
+    const bubble = document.createElement("div");
+
+    row.className = `chat-row ${message.sender === "visitor" ? "is-me" : "is-agent"}`;
+    bubble.className = "chat-bubble";
+    bubble.textContent = message.text || "";
+    row.appendChild(bubble);
+    chatMessages.appendChild(row);
+  });
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function startChat() {
+  if (chatStarting) {
+    return null;
+  }
+
+  chatStarting = true;
+
+  try {
+    const data = await chatPost("/api/public/chat/start", {
+      visitor_id: chatVisitorId,
+      conversation_id: chatConversationId,
+      name: "Web Ziyaretçisi"
+    });
+
+    chatConversationId = data.conversation?.id || "";
+
+    if (chatConversationId) {
+      localStorage.setItem(chatConversationKey, chatConversationId);
+    }
+
+    renderChatMessages(data.conversation);
+    return data.conversation;
+  } finally {
+    chatStarting = false;
+  }
+}
+
+async function refreshChat() {
+  if (!chatConversationId) {
+    await startChat();
+    return;
+  }
+
+  const query = new URLSearchParams({ visitor_id: chatVisitorId });
+  const data = await chatRequest(`/api/public/chat/${encodeURIComponent(chatConversationId)}?${query}`);
+  renderChatMessages(data.conversation);
+}
+
+function setChatOpen(open) {
+  if (!chatWidget || !chatToggle) {
+    return;
+  }
+
+  chatWidget.classList.toggle("is-open", open);
+  chatToggle.setAttribute("aria-expanded", String(open));
+
+  if (open) {
+    startChat().catch(() => {});
+    chatInput?.focus();
+    clearInterval(chatPollTimer);
+    chatPollTimer = setInterval(() => refreshChat().catch(() => {}), 4500);
+  } else {
+    clearInterval(chatPollTimer);
+    chatPollTimer = null;
+  }
+}
+
+chatToggle?.addEventListener("click", () => {
+  setChatOpen(!chatWidget.classList.contains("is-open"));
+});
+
+chatClose?.addEventListener("click", () => {
+  setChatOpen(false);
+});
+
+chatForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const text = normalizeText(chatInput?.value || "");
+
+  if (!text) {
+    return;
+  }
+
+  if (chatInput) {
+    chatInput.value = "";
+  }
+
+  try {
+    if (!chatConversationId) {
+      await startChat();
+    }
+
+    const data = await chatPost(`/api/public/chat/${encodeURIComponent(chatConversationId)}/message`, {
+      visitor_id: chatVisitorId,
+      name: "Web Ziyaretçisi",
+      text
+    });
+
+    renderChatMessages(data.conversation);
+  } catch {
+    const fallback = document.createElement("div");
+    fallback.className = "chat-row is-agent";
+    fallback.innerHTML = '<div class="chat-bubble">Mesaj gönderilemedi. Lütfen biraz sonra tekrar deneyin.</div>';
+    chatMessages?.appendChild(fallback);
+  }
+});
 
 async function playActiveChannel({ keepCurrentUntilReady = false } = {}) {
   const token = ++switchToken;

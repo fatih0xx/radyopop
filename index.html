@@ -118,22 +118,28 @@
       <a class="mail-link" href="mailto:iletisim@radyopop.site">iletisim@radyopop.site</a>
     </dialog>
 
+    <section id="siteChat" class="site-chat" aria-label="Canlı destek">
+      <div class="chat-panel" aria-live="polite">
+        <div class="chat-head">
+          <div>
+            <strong>Canlı Destek</strong>
+            <span>Radyo Pop</span>
+          </div>
+          <button id="chatClose" type="button" aria-label="Sohbeti kapat">Kapat</button>
+        </div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <form id="chatForm" class="chat-form">
+          <input id="chatInput" name="message" type="text" maxlength="1200" autocomplete="off" placeholder="Mesajınızı yazın..." aria-label="Mesajınız">
+          <button type="submit">Gönder</button>
+        </form>
+      </div>
+      <button id="chatToggle" class="chat-toggle" type="button" aria-expanded="false" aria-controls="siteChat">
+        <span class="chat-dot" aria-hidden="true"></span>
+        Sohbet
+      </button>
+    </section>
+
     <audio id="radioAudio" preload="auto" playsinline></audio>
     <script src="app.js" defer></script>
-    <!--Start of Tawk.to Script-->
-    <script>
-      var Tawk_API = Tawk_API || {};
-      var Tawk_LoadStart = new Date();
-      (function () {
-        var s1 = document.createElement("script");
-        var s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = "https://embed.tawk.to/6a05c7c4cea0611c326e17e2/1joj98ls9";
-        s1.charset = "UTF-8";
-        s1.setAttribute("crossorigin", "*");
-        s0.parentNode.insertBefore(s1, s0);
-      })();
-    </script>
-    <!--End of Tawk.to Script-->
   </body>
 </html>
