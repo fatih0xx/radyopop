@@ -5,35 +5,39 @@ const channels = [
     shortName: "Türkçe",
     streamUrl: "https://yayin.radyopop.site/turkce",
     logo: "assets/logos/radyo-pop-turkce.png",
-    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/now-playing"
+    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/public/radios/radyo-pop-turkce/now-playing"
   },
   {
     id: "yabanci",
     name: "Radyo Pop Yabancı",
     shortName: "Yabancı",
     streamUrl: "https://yayin.radyopop.site/radyo",
-    logo: "assets/logos/radyo-pop-yabanci.png"
+    logo: "assets/logos/radyo-pop-yabanci.png",
+    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/public/radios/radyo-pop/now-playing"
   },
   {
     id: "nostalji",
     name: "Radyo Pop Nostalji",
     shortName: "Nostalji",
     streamUrl: "https://yayin.radyopop.site/nostalji",
-    logo: "assets/logos/radyo-pop-nostalji.png"
+    logo: "assets/logos/radyo-pop-nostalji.png",
+    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/public/radios/radyo-pop-nostalji/now-playing"
   },
   {
     id: "remix",
     name: "Radyo Pop Remix",
     shortName: "Remix",
     streamUrl: "https://yayin.radyopop.site/remix",
-    logo: "assets/logos/radyo-pop-remix.png?v=5"
+    logo: "assets/logos/radyo-pop-remix.png?v=5",
+    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/public/radios/radyo-pop-remix/now-playing"
   },
   {
     id: "arabesk",
     name: "Radyo Pop Arabesk",
     shortName: "Arabesk",
     streamUrl: "https://yayin.radyopop.site/arabesk",
-    logo: "assets/logos/radyo-pop-arabesk.png"
+    logo: "assets/logos/radyo-pop-arabesk.png",
+    metadataUrl: "https://akkurtcastpanel.radyopop.site:5050/api/public/radios/arabesk/now-playing"
   }
 ];
 
@@ -317,11 +321,8 @@ async function loadNowPlaying(channelId) {
   }
 
   try {
-    let response = await fetch(`api/now-playing/${channelId}`, { cache: "no-store" });
-
-    if (!response.ok && channel.metadataUrl) {
-      response = await fetch(channel.metadataUrl, { cache: "no-store" });
-    }
+    const metadataUrl = channel.metadataUrl || `api/now-playing/${channelId}`;
+    const response = await fetch(metadataUrl, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error("Parça bilgisi alınamadı.");
