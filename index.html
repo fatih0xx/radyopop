@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://is1-ssl.mzstatic.com">
     <link rel="preload" as="image" href="assets/logos/radyo-pop-main.png">
     <link rel="preload" as="image" href="assets/logos/radyo-pop-turkce.png">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260514-compact">
   </head>
   <body>
     <div class="app-shell">
@@ -118,14 +118,14 @@
       <a class="mail-link" href="mailto:iletisim@radyopop.site">iletisim@radyopop.site</a>
     </dialog>
 
-    <section id="siteChat" class="site-chat" aria-label="Canlı destek">
+    <section id="siteChat" class="site-chat" aria-label="Bize ulaşın">
       <div class="chat-panel" aria-live="polite">
         <div class="chat-head">
           <div>
-            <strong>Canlı Destek</strong>
-            <span>Radyo Pop</span>
+            <strong>Bize Ulaşın</strong>
+            <span>Mesajınızı iletin</span>
           </div>
-          <button id="chatClose" type="button" aria-label="Sohbeti kapat">Kapat</button>
+          <button id="chatClose" type="button" aria-label="İletişim panelini kapat">Kapat</button>
         </div>
         <div id="chatMessages" class="chat-messages"></div>
         <form id="chatForm" class="chat-form">
@@ -133,13 +133,13 @@
           <button type="submit">Gönder</button>
         </form>
       </div>
-      <button id="chatToggle" class="chat-toggle" type="button" aria-expanded="false" aria-controls="siteChat">
+      <button id="chatToggle" class="chat-toggle" type="button" aria-expanded="false" aria-controls="siteChat" aria-label="Bize ulaşın">
         <span class="chat-dot" aria-hidden="true"></span>
-        Sohbet
+        Bize Ulaşın
       </button>
     </section>
 
     <audio id="radioAudio" preload="auto" playsinline></audio>
-    <script src="app.js" defer></script>
+    <script src="app.js?v=20260514-contact" defer></script>
   </body>
 </html>

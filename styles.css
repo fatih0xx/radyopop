@@ -722,105 +722,176 @@ button {
 
 @media (max-width: 640px) {
   .app-shell {
-    width: min(100% - 20px, 1180px);
-    max-width: calc(100vw - 20px);
-    padding: 10px 0 18px;
-    gap: 12px;
-  }
-
-  .topbar {
-    min-height: 74px;
-    gap: 10px;
-  }
-
-  .brand-group {
-    gap: 10px;
-  }
-
-  .brand-logo {
-    width: 58px;
-    height: 58px;
-  }
-
-  .brand-mark strong {
-    font-size: 1.32rem;
-  }
-
-  .brand-mark span {
-    font-size: 0.84rem;
-  }
-
-  .site-nav {
-    gap: 6px;
-  }
-
-  .site-nav button {
-    min-height: 36px;
-    padding: 8px 9px;
-    font-size: 0.86rem;
-  }
-
-  .station-rail {
-    padding: 8px;
+    width: min(100% - 16px, 1180px);
+    max-width: calc(100vw - 16px);
+    min-height: auto;
+    padding: 6px 0 0;
+    grid-template-rows: auto auto;
     gap: 8px;
   }
 
+  .topbar {
+    min-height: 0;
+    padding: 5px 6px;
+    display: grid;
+    gap: 4px;
+  }
+
+  .brand-group {
+    max-width: 100%;
+    gap: 6px;
+  }
+
+  .brand-logo {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand-mark {
+    max-width: 104px;
+  }
+
+  .brand-mark strong {
+    font-size: 0.9rem;
+  }
+
+  .brand-mark span {
+    max-width: 104px;
+    font-size: 0.52rem;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .site-nav {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 3px;
+    margin-left: 0;
+  }
+
+  .site-nav button {
+    min-height: 28px;
+    padding: 4px;
+    font-size: 0.68rem;
+  }
+
+  .player-layout {
+    gap: 8px;
+    align-content: start;
+  }
+
+  .station-rail {
+    height: 78px;
+    min-height: 0;
+    padding: 7px;
+    gap: 8px;
+    grid-template-columns: repeat(5, minmax(84px, 1fr));
+    align-items: start;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .station-rail::-webkit-scrollbar {
+    display: none;
+  }
+
   .station-button {
-    min-height: 96px;
-    padding: 8px;
+    height: 62px;
+    min-height: 0;
+    padding: 5px;
+    gap: 3px;
+    align-content: center;
+    grid-template-rows: 30px auto;
   }
 
   .station-button img {
-    width: 56px;
-    height: 56px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .station-button span {
+    font-size: 0.76rem;
+    line-height: 1;
   }
 
   .now-playing {
-    padding: 16px;
-    gap: 14px;
+    min-height: clamp(320px, calc(100svh - 245px), 520px);
+    padding: 10px;
+    gap: 10px;
+    align-content: center;
   }
 
   .active-logo-wrap {
-    max-width: 184px;
+    max-width: clamp(136px, 23svh, 178px);
   }
 
   .track-area {
-    grid-template-columns: 128px minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px;
     justify-items: stretch;
     text-align: left;
   }
 
   .cover-frame {
-    max-width: 128px;
-    padding: 7px;
+    max-width: 96px;
+    padding: 5px;
+  }
+
+  .track-copy {
+    gap: 6px;
   }
 
   .track-copy h1 {
-    font-size: 1.28rem;
+    font-size: 1.08rem;
+    line-height: 1.12;
   }
 
   .track-copy p {
-    font-size: 0.94rem;
+    font-size: 0.84rem;
   }
 
   .live-state {
     justify-self: start;
-    font-size: 0.78rem;
+    padding: 6px 9px;
+    font-size: 0.72rem;
   }
 
   .control-row {
     min-height: 0;
-    padding: 12px 0 0;
-    grid-template-columns: 64px 1fr;
+    padding: 8px 0 0;
+    grid-template-columns: 52px 1fr;
+    gap: 10px;
+  }
+
+  .play-toggle {
+    width: 52px;
+    height: 52px;
+  }
+
+  .play-icon {
+    margin-left: 4px;
+    border-top-width: 11px;
+    border-bottom-width: 11px;
+    border-left-width: 17px;
   }
 
   .meter {
+    height: 32px;
     justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .meter span {
+    width: 10px;
   }
 
   .volume-control {
     grid-column: 1 / -1;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 0.82rem;
   }
 
   .info-dialog {
@@ -840,17 +911,97 @@ button {
   }
 
   .site-chat {
-    right: 10px;
-    bottom: 10px;
+    position: static;
+    width: min(100% - 16px, 1180px);
+    margin: 8px auto 10px;
+    justify-items: end;
+    pointer-events: auto;
   }
 
   .chat-panel {
-    width: calc(100vw - 20px);
-    height: min(440px, calc(100svh - 86px));
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: calc(60px + env(safe-area-inset-bottom));
+    z-index: 41;
+    width: auto;
+    height: min(400px, calc(100svh - 76px));
   }
 
   .chat-toggle {
-    min-height: 52px;
+    justify-self: end;
+    min-height: 44px;
+    padding: 0 12px;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+
+  .chat-dot {
+    width: 8px;
+    height: 8px;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-mark strong {
+    font-size: 0.84rem;
+  }
+
+  .brand-mark span {
+    display: block;
+    max-width: 98px;
+    font-size: 0.48rem;
+  }
+
+  .site-nav button {
+    padding: 3px;
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 760px) {
+  .station-rail {
+    height: 72px;
+  }
+
+  .station-button {
+    height: 58px;
+  }
+
+  .station-button img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .active-logo-wrap {
+    max-width: clamp(132px, 22svh, 156px);
+  }
+
+  .now-playing {
+    min-height: clamp(320px, calc(100svh - 245px), 480px);
+  }
+
+  .track-area {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+
+  .cover-frame {
+    max-width: 84px;
+  }
+
+  .play-toggle {
+    width: 46px;
+    height: 46px;
+  }
+
+  .control-row {
+    grid-template-columns: 46px 1fr;
   }
 }
 

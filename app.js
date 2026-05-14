@@ -390,7 +390,7 @@ function chatRequest(path, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      throw new Error(data.error || "Sohbet bağlantısı kurulamadı.");
+      throw new Error(data.error || "İletişim bağlantısı kurulamadı.");
     }
 
     return data;
