@@ -756,12 +756,12 @@ button {
   }
 
   .brand-mark span {
-    max-width: 240px;
+    max-width: none;
     font-size: 0.78rem;
     line-height: 1.12;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
   }
 
   .site-nav {
@@ -956,7 +956,7 @@ button {
 
   .brand-mark span {
     display: block;
-    max-width: 210px;
+    max-width: none;
     font-size: 0.72rem;
   }
 
