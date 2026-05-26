@@ -613,7 +613,7 @@ button {
 .chat-form {
   padding: 12px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(120px, 0.45fr) minmax(0, 1fr) auto;
   gap: 8px;
   border-top: 1px solid var(--line);
   background: #ffffff;
@@ -646,6 +646,15 @@ button {
 .chat-form button {
   min-height: 42px;
   padding: 10px 12px;
+}
+
+.chat-status {
+  grid-column: 1 / -1;
+  min-height: 18px;
+  margin: 0;
+  color: var(--red-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
 }
 
 .chat-toggle {
@@ -935,6 +944,10 @@ button {
     padding: 0 12px;
     gap: 8px;
     font-size: 0.88rem;
+  }
+
+  .chat-form {
+    grid-template-columns: 1fr;
   }
 
   .chat-dot {

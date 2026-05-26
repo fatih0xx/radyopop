@@ -59,11 +59,14 @@ const chatToggle = document.querySelector("#chatToggle");
 const chatClose = document.querySelector("#chatClose");
 const chatMessages = document.querySelector("#chatMessages");
 const chatForm = document.querySelector("#chatForm");
+const chatName = document.querySelector("#chatName");
 const chatInput = document.querySelector("#chatInput");
+const chatStatus = document.querySelector("#chatStatus");
 
 const chatApiBase = "https://akkurtcastpanel.radyopop.site:5050";
 const chatVisitorKey = "radyoPopChatVisitorId";
 const chatConversationKey = "radyoPopChatConversationId";
+const chatNameKey = "radyoPopChatVisitorName";
 
 const audioPool = new Map();
 
@@ -81,6 +84,10 @@ let chatStarting = false;
 if (!chatVisitorId) {
   chatVisitorId = globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   localStorage.setItem(chatVisitorKey, chatVisitorId);
+}
+
+if (chatName) {
+  chatName.value = localStorage.getItem(chatNameKey) || "";
 }
 
 function setLiveState(text) {
@@ -404,6 +411,12 @@ function chatPost(path, payload) {
   });
 }
 
+function setChatStatus(message = "") {
+  if (chatStatus) {
+    chatStatus.textContent = message;
+  }
+}
+
 function renderChatMessages(conversation) {
   if (!chatMessages || !conversation) {
     return;
@@ -430,13 +443,21 @@ async function startChat() {
     return null;
   }
 
+  const visitorName = normalizeText(chatName?.value || "");
+  if (!visitorName) {
+    setChatStatus("Lütfen adınızı yazın.");
+    chatName?.focus();
+    return null;
+  }
+
+  localStorage.setItem(chatNameKey, visitorName);
   chatStarting = true;
 
   try {
     const data = await chatPost("/api/public/chat/start", {
       visitor_id: chatVisitorId,
       conversation_id: chatConversationId,
-      name: "Web Ziyaretçisi"
+      name: visitorName
     });
 
     chatConversationId = data.conversation?.id || "";
@@ -454,7 +475,6 @@ async function startChat() {
 
 async function refreshChat() {
   if (!chatConversationId) {
-    await startChat();
     return;
   }
 
@@ -472,8 +492,12 @@ function setChatOpen(open) {
   chatToggle.setAttribute("aria-expanded", String(open));
 
   if (open) {
-    startChat().catch(() => {});
-    chatInput?.focus();
+    if (chatConversationId) {
+      refreshChat().catch(() => {});
+      chatInput?.focus();
+    } else {
+      chatName?.focus();
+    }
     clearInterval(chatPollTimer);
     chatPollTimer = setInterval(() => refreshChat().catch(() => {}), 4500);
   } else {
@@ -492,12 +516,22 @@ chatClose?.addEventListener("click", () => {
 
 chatForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const visitorName = normalizeText(chatName?.value || "");
   const text = normalizeText(chatInput?.value || "");
 
-  if (!text) {
+  if (!visitorName) {
+    setChatStatus("Lütfen adınızı yazın.");
+    chatName?.focus();
     return;
   }
 
+  if (!text) {
+    setChatStatus("Lütfen mesajınızı yazın.");
+    chatInput?.focus();
+    return;
+  }
+
+  setChatStatus("");
   if (chatInput) {
     chatInput.value = "";
   }
@@ -507,14 +541,20 @@ chatForm?.addEventListener("submit", async (event) => {
       await startChat();
     }
 
+    if (!chatConversationId) {
+      return;
+    }
+
     const data = await chatPost(`/api/public/chat/${encodeURIComponent(chatConversationId)}/message`, {
       visitor_id: chatVisitorId,
-      name: "Web Ziyaretçisi",
+      name: visitorName,
       text
     });
 
     renderChatMessages(data.conversation);
+    setChatStatus("");
   } catch {
+    setChatStatus("Mesaj gönderilemedi. Lütfen biraz sonra tekrar deneyin.");
     const fallback = document.createElement("div");
     fallback.className = "chat-row is-agent";
     fallback.innerHTML = '<div class="chat-bubble">Mesaj gönderilemedi. Lütfen biraz sonra tekrar deneyin.</div>';

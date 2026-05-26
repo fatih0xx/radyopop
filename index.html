@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://is1-ssl.mzstatic.com">
     <link rel="preload" as="image" href="assets/logos/radyo-pop-main.png">
     <link rel="preload" as="image" href="assets/logos/radyo-pop-turkce.png">
-    <link rel="stylesheet" href="styles.css?v=20260514-mobile-logo">
+    <link rel="stylesheet" href="styles.css?v=20260526-contact-name">
   </head>
   <body>
     <div class="app-shell">
@@ -129,8 +129,10 @@
         </div>
         <div id="chatMessages" class="chat-messages"></div>
         <form id="chatForm" class="chat-form">
+          <input id="chatName" name="name" type="text" maxlength="80" autocomplete="name" required placeholder="Adınız" aria-label="Adınız">
           <input id="chatInput" name="message" type="text" maxlength="1200" autocomplete="off" placeholder="Mesajınızı yazın..." aria-label="Mesajınız">
           <button type="submit">Gönder</button>
+          <p id="chatStatus" class="chat-status" role="status"></p>
         </form>
       </div>
       <button id="chatToggle" class="chat-toggle" type="button" aria-expanded="false" aria-controls="siteChat" aria-label="Bize ulaşın">
@@ -140,6 +142,6 @@
     </section>
 
     <audio id="radioAudio" preload="auto" playsinline></audio>
-    <script src="app.js?v=20260514-contact" defer></script>
+    <script src="app.js?v=20260526-contact-name" defer></script>
   </body>
 </html>
